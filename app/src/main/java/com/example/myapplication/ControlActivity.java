@@ -1,11 +1,10 @@
 package com.example.myapplication;
 
-import android.nfc.Tag;
-import android.util.Log;
 import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 public class ControlActivity {
 
@@ -19,6 +18,17 @@ public class ControlActivity {
         }
 
         return upDownArr;
+    }
+
+    static int[][] reverseArr(int[][] arr) {
+        int[][] newArr = new int[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j=0; j < 2; j--) {
+                int tam = 3;
+                newArr[i][j] = arr[i][tam];
+                tam--;
+            }
+        }
     }
 
     static void setTextButton(int arr[][], Button[][] buttons) {
@@ -50,7 +60,7 @@ public class ControlActivity {
         arr[addNumberAt[0]][addNumberAt[1]] = numberRandom;
     }
 
-    static void push0(int arr[][]) {
+    static void push0(int[][] arr) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 for (int t = 0; t < 3; t++) {
@@ -65,25 +75,31 @@ public class ControlActivity {
         }
     }
 
-    static void pushLeft(int arr[][]) {
+    static int[][] pushLeft(int[][] arr) {
         int[][] pushedArr = arr.clone();
         push0(arr);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++)
                 if (arr[i][j] == arr[i][j + 1]) {
                     arr[i][j] *= 2;
-                    for (int k = j+1; k < 2; k++) {
+                    for (int k = j + 1; k < 2; k++) {
                         arr[i][k] = arr[i][k + 1];
                     }
                     arr[i][3] = 0;
                 }
         }
 
-        if (Arrays.equals(pushedArr, arr)) {            addRandom(arr);
-
+        if (Arrays.equals(pushedArr, arr)) {
+//            addRandom(arr);
         } else {
             addRandom(arr);
         }
+        return arr;
+    }
+
+    static int[][] pushUp(int[][] arr) {
+        int[][] updownArr = transformArr(arr);
+        return transformArr(pushLeft(updownArr));
     }
 
 }
