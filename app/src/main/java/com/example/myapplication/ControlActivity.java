@@ -1,14 +1,15 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class ControlActivity {
 
-    static int[][] transformArr(int arr[][]) {
+    private static int[][] transformArr(int[][] arr) {
         int[][] upDownArr = new int[4][4];
 
         for (int i = 0; i < 4; i++) {
@@ -20,18 +21,22 @@ public class ControlActivity {
         return upDownArr;
     }
 
-    static int[][] reverseArr(int[][] arr) {
+    private static int[][] reverseArr(int[][] arr) {
         int[][] newArr = new int[4][4];
+
         for (int i = 0; i < 4; i++) {
-            for (int j=0; j < 2; j--) {
-                int tam = 3;
+            int tam = 3;
+            for (int j = 0; j < 4; j++) {
                 newArr[i][j] = arr[i][tam];
                 tam--;
             }
         }
+
+        return newArr;
     }
 
-    static void setTextButton(int arr[][], Button[][] buttons) {
+    @SuppressLint("SetTextI18n")
+    static void setTextButton(int[][] arr, Button[][] buttons) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (arr[i][j] != 0) {
@@ -43,7 +48,7 @@ public class ControlActivity {
         }
     }
 
-    static void addRandom(int arr[][]) {
+    static void addRandom(int[][] arr) {
         ArrayList<int[]> emptyArr = new ArrayList<>();
         int[] arrRandomNumbers = new int[]{2, 2, 2, 4};
         for (int i = 0; i < 4; i++) {
@@ -60,46 +65,73 @@ public class ControlActivity {
         arr[addNumberAt[0]][addNumberAt[1]] = numberRandom;
     }
 
-    static void push0(int[][] arr) {
+    private static int[][] filter0(int[][] arr) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 for (int t = 0; t < 3; t++) {
                     if (arr[i][j] == 0) {
-                        for (int k = j; k < 3; k++) {
-                            arr[i][k] = arr[i][k + 1];
-                        }
+                        System.arraycopy(arr[i], j + 1, arr[i], j, 3 - j);
                         arr[i][3] = 0;
                     }
                 }
             }
         }
-    }
 
-    static int[][] pushLeft(int[][] arr) {
-        int[][] pushedArr = arr.clone();
-        push0(arr);
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++)
-                if (arr[i][j] == arr[i][j + 1]) {
-                    arr[i][j] *= 2;
-                    for (int k = j + 1; k < 2; k++) {
-                        arr[i][k] = arr[i][k + 1];
-                    }
-                    arr[i][3] = 0;
-                }
-        }
-
-        if (Arrays.equals(pushedArr, arr)) {
-//            addRandom(arr);
-        } else {
-            addRandom(arr);
-        }
         return arr;
     }
 
+    private static int[][] copyArr(int[][] arr) {
+        int[][] newArr = new int[4][4];
+        for (int i = 0; i < 4; i++) {
+            System.arraycopy(arr[i], 0, newArr[i], 0, 4);
+        }
+        return newArr;
+    }
+
+    private static boolean compareArr(int[][] arr1, int[][] arr2) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (arr1[i][j] != arr2[i][j])
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    static int[][] pushLeft(int[][] arr) {
+        int[][] newArr = copyArr(arr);
+        int[][] pushedArr = filter0(newArr);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++)
+                if (pushedArr[i][j] == pushedArr[i][j + 1]) {
+                    pushedArr[i][j] *= 2;
+                    for (int k = j + 1; k < 3; k++) {
+                        pushedArr[i][k] = pushedArr[i][k + 1];
+                    }
+                    pushedArr[i][3] = 0;
+                }
+        }
+
+        if (!compareArr(pushedArr, arr))
+            addRandom(pushedArr);
+
+        return pushedArr;
+    }
+
+    static int[][] pushRight(int[][] arr) {
+        int[][] newArr = reverseArr(arr);
+        return reverseArr(pushLeft(newArr));
+    }
+
     static int[][] pushUp(int[][] arr) {
-        int[][] updownArr = transformArr(arr);
-        return transformArr(pushLeft(updownArr));
+        int[][] upDownArr = transformArr(arr);
+        return transformArr(pushLeft(upDownArr));
+    }
+
+    static int[][] pushDown(int[][] arr) {
+        int[][] upDownArr = transformArr(arr);
+        return transformArr(pushRight(upDownArr));
     }
 
 }

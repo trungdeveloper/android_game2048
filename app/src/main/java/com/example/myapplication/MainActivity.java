@@ -38,23 +38,23 @@ public class MainActivity extends AppCompatActivity {
 
         root.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeTop() {
-                Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
                 bigArr = ControlActivity.pushUp(bigArr);
                 ControlActivity.setTextButton(bigArr, buttons);
             }
 
             public void onSwipeRight() {
-                Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
+                bigArr = ControlActivity.pushRight(bigArr);
+                ControlActivity.setTextButton(bigArr, buttons);
             }
 
             public void onSwipeLeft() {
-                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
-                ControlActivity.pushLeft(bigArr);
+                bigArr = ControlActivity.pushLeft(bigArr);
                 ControlActivity.setTextButton(bigArr, buttons);
             }
 
             public void onSwipeBottom() {
-                Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+                bigArr = ControlActivity.pushDown(bigArr);
+                ControlActivity.setTextButton(bigArr, buttons);
             }
         });
     }
